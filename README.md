@@ -71,7 +71,7 @@ The model demonstrates **competitive or superior performance** compared with exi
 
 ---
 
-## 📁 Repository Structure (Planned)
+## 📁 Repository Structure
 
 ```text
 .
