@@ -1,8 +1,8 @@
-下面是一份**可直接用于 GitHub / GitLab 项目的 README（英文版，符合计算机视觉/医学影像论文代码仓库常见规范）**，内容与你给出的论文摘要、方法和实验结果严格一致，并**明确注明“论文录用后公开代码与权重”**，语气学术、克制、规范。
+
 
 ---
 
-# Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception
+# Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception(Placeholder, the paper will be officially published after acceptance)
 
 for Robust Colorectal Polyp Segmentation
 
