@@ -1,7 +1,7 @@
 {
   "dataset": "CVC-ClinicDB",
-  "image_dir": "E:\\pyproject\\valueproject\\poly_seg\\datasets\\cvc-clinicdb\\images",
-  "mask_dir": "E:\\pyproject\\valueproject\\poly_seg\\datasets\\cvc-clinicdb\\masks",
+  "image_dir": "/datasets/cvc-clinicdb/images",
+  "mask_dir": "/datasets/cvc-clinicdb/masks",
   "random_seed": 2026,
   "counts": {
     "train": 490,
