@@ -80,9 +80,9 @@ datasets/
 All pretrained weights, dataset splits, logs, and visualization results are provided via Baidu Netdisk:
 
 👉 **Baidu Netdisk Link:**
-[https://pan.baidu.com/s/1aznunT5vd9zFsEtesPiERw](https://pan.baidu.com/s/1aznunT5vd9zFsEtesPiERw)
+[(https://pan.baidu.com/s/1XY--556TUJpaaocnlWlYQQ)](https://pan.baidu.com/s/1XY--556TUJpaaocnlWlYQQ))
 
-🔑 **Extraction Code:** `58qf`
+🔑 **Extraction Code:** `2ifu`
 
 📦 Contents include:
 
