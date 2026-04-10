@@ -147,7 +147,7 @@ visual/
 ```bibtex
 @article{paper_2026,
   title={Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception for Robust Colorectal Polyp Segmentation},
-  author={Your Name et al.},
+  author={Rong Gao, Qi Ke, Aiquan Li, Xinning Qin, Sichao Zhao*},
   journal={Plos one },
   year={2026}
 }
