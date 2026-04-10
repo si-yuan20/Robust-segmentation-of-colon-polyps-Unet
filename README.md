@@ -1,126 +1,162 @@
 
-
 ---
 
-# Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception(Placeholder, the paper will be officially published after acceptance)
+# 🧠 Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception
 
-for Robust Colorectal Polyp Segmentation
+### for Robust Colorectal Polyp Segmentation
+
+---
 
 ## 📌 Overview
 
-This repository corresponds to the paper:
+This repository corresponds to our research work:
 
 > **An Enhanced U-Shape Architecture Network with Cross-Scale Attention and Frequency-Domain Perception for Robust Colorectal Polyp Segmentation**
 
-Early detection and accurate segmentation of colorectal polyps in colonoscopy images are crucial for reducing the incidence and mortality of colorectal cancer. However, polyp segmentation remains challenging due to large-scale variations in polyp size, indistinct boundaries, and complex background interference.
+Accurate segmentation of colorectal polyps from colonoscopy images plays a critical role in early diagnosis and prevention of colorectal cancer. However, challenges such as scale variation, blurred boundaries, and complex backgrounds significantly hinder segmentation performance.
 
-To address these challenges, we propose an enhanced U-shaped encoder–decoder network that integrates **cross-scale attention mechanisms** and **frequency-domain perception**, enabling robust and accurate colorectal polyp segmentation.
+To address these issues, we propose an enhanced U-shaped encoder–decoder architecture that integrates:
 
-⚠️ **Note**:
-**The source code, pretrained model weights, and full experimental configurations will be publicly released after the acceptance of the corresponding paper.**
+* ✅ **SCAS (Skip Connection-based Cross-scale Attention Strategy)**
+* ✅ **D2F (Dual-Domain Feature Fusion with Frequency Perception)**
 
----
-
-## 🧠 Methodology
-
-The proposed network introduces two key modules to enhance feature representation and boundary delineation:
-
-### 1. Scale-Aware Cross Attention Skip Connection (SCAS)
-
-* Designed for encoder–decoder skip connections
-* Utilizes **multi-head cross attention** to model interactions between encoder and decoder features
-* Integrates **multi-scale pyramid fusion** to dynamically adapt to polyps of varying sizes
-* Effectively alleviates semantic gaps between low-level and high-level features
-
-### 2. Dual-Domain Fusion (D2F) Module
-
-* Deployed at the bottleneck stage of the network
-* Separates features into:
-
-  * **Low-frequency components** (global structural information)
-  * **High-frequency components** (edge and boundary details)
-* Assigns adaptive weights to different frequency components
-* Enhances joint spatial–frequency domain perception for precise boundary segmentation
+These modules jointly improve feature representation by capturing both spatial and frequency-domain information.
 
 ---
 
-## 🏗️ Network Architecture
+## 🚀 Key Features
 
-* U-shaped encoder–decoder backbone
-* Cross-scale attention-based skip connections
-* Frequency-domain perception at the latent representation stage
-* End-to-end trainable with standard segmentation losses
-
----
-
-## 📊 Experimental Results
-
-The proposed method is evaluated on multiple public colorectal polyp segmentation benchmarks.
-
-### Quantitative Performance (Representative Results)
-
-| Dataset      | mIoU   | mDice  |
-| ------------ | ------ | ------ |
-| CVC-ClinicDB | 0.8738 | 0.9314 |
-
-The model demonstrates **competitive or superior performance** compared with existing mainstream approaches, particularly in handling:
-
-* Multi-scale polyp morphology
-* Blurred or irregular boundaries
-* Background noise and visual artifacts
+* 🔹 Cross-scale attention for effective multi-level feature fusion
+* 🔹 Frequency-domain perception for boundary refinement
+* 🔹 Robust performance across multiple benchmark datasets
+* 🔹 Lightweight and efficient design for practical deployment
 
 ---
 
-## 📁 Repository Structure
+## 📂 Project Structure
 
-```text
-.
-├── configs/            # Training and evaluation configurations
-├── datasets/           # Dataset loading and preprocessing scripts
-├── models/
-│   ├── backbone/       # Encoder–decoder backbone
-│   ├── scas/           # Scale-Aware Cross Attention module
-│   ├── d2f/            # Dual-Domain Fusion module
-│   └── network.py      # Full network definition
-├── losses/             # Loss functions
-├── utils/              # Metrics, logging, visualization
-├── train.py            # Training script
-├── test.py             # Evaluation script
-└── README.md
+```bash
+├── scripts/
+│   ├── train.py        # Training pipeline
+│   ├── val.py          # Validation and evaluation
+│   └── utils.py        # Utility functions (metrics, logging, etc.)
+│
+├── models/             # Network architecture (SCAS, D2F modules)
+├── datasets/           # Dataset loading and preprocessing
+├── results/            # Training logs and saved outputs
+│   ├── logs/
+│   ├── models/
+│   └── visuals/
+│
+├── config/             # Configuration files
+├── README.md
+```
+---
+
+## 📊 Datasets
+
+The model is evaluated on multiple public polyp segmentation datasets:
+
+* **CVC-ClinicDB**
+* **CVC-ColonDB**
+* **ETIS-LaribPolypDB**
+* **CVC-t**
+
+📌 Please organize datasets as:
+
+```bash
+datasets/
+├── dataset_name/
+│   ├── images/
+│   └── masks/
+```
+---
+
+## 📥 Pretrained Models & Resources
+
+All pretrained weights, experimental results, and supplementary materials are available via Google Drive:
+
+👉 **Download Link:**
+[https://drive.google.com/drive/folders/1YZtpfXwUjrcIPLoa8odCHRX-lquYAlPy?usp=sharing](https://drive.google.com/drive/folders/1YZtpfXwUjrcIPLoa8odCHRX-lquYAlPy?usp=sharing)
+
+Contents include:
+
+* ✔️ Pretrained model weights
+* ✔️ Training logs
+* ✔️ Visualization results
+* ✔️ Dataset splits (train/val/test)
+---
+
+## ⚙️ Installation
+
+```bash
+conda create -n polyp python=3.10
+conda activate polyp
+
+pip install -r requirements.txt
 ```
 
 ---
 
-## 📦 Code & Model Availability
+## 🏋️ Training
 
-🚧 **Current Status**:
-The codebase and pretrained model weights are **under preparation**.
+```bash
+sh main.sh
+```
 
-📢 **Release Plan**:
+### Key Settings:
 
-* Full source code
-* Pretrained model weights
-* Training and evaluation scripts
-* Detailed reproduction instructions
-
-👉 **All materials will be publicly released immediately after the paper is officially accepted.**
-
----
-
-## 🏥 Clinical Significance
-
-The proposed method provides a reliable and accurate segmentation tool for colorectal polyps, offering potential support for **clinical endoscopic assistant diagnosis**, and contributing to improved colorectal cancer screening workflows.
+* Batch size: 8
+* Learning rate: 1e-4
+* Optimizer: AdamW
+* Scheduler: Cosine Annealing
+* Epochs: 100
 
 ---
 
-## 📄 Citation
+## 🧪 Evaluation
 
-If you find this work useful in your research, please consider citing our paper (citation information will be updated upon publication).
+```bash
+python scripts/val.py
+```
+
+Evaluation metrics include:
+
+* mDice
+* mIoU
+* Precision / Recall
+* HD95
+* ASSD
+* BF-score
 
 ---
 
-## 📬 Contact
+## 📈 Results
 
-For questions or collaboration inquiries, please contact the authors via the correspondence information provided in the paper.
+Our method demonstrates strong performance across datasets, achieving:
+
+* Superior boundary delineation
+* Robust generalization ability
+* Stable multi-run performance
 
 ---
+
+Saved under:
+
+```bash
+results/visuals/
+```
+---
+
+## 📜 Citation
+
+If you find this work useful, please cite:
+
+```bibtex
+@article{your_paper_2026,
+  title={Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception for Robust Colorectal Polyp Segmentation},
+  author={Your Name et al.},
+  journal={Plos one},
+  year={2026}
+}
+```
