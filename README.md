@@ -1,6 +1,4 @@
 
----
-
 # 🧠 Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception
 
 ### for Robust Colorectal Polyp Segmentation
@@ -13,24 +11,22 @@ This repository corresponds to our research work:
 
 > **An Enhanced U-Shape Architecture Network with Cross-Scale Attention and Frequency-Domain Perception for Robust Colorectal Polyp Segmentation**
 
-Accurate segmentation of colorectal polyps from colonoscopy images plays a critical role in early diagnosis and prevention of colorectal cancer. However, challenges such as scale variation, blurred boundaries, and complex backgrounds significantly hinder segmentation performance.
+Accurate segmentation of colorectal polyps from colonoscopy images plays a crucial role in early diagnosis and prevention of colorectal cancer. However, challenges such as large-scale variation, indistinct boundaries, and complex background interference remain significant.
 
-To address these issues, we propose an enhanced U-shaped encoder–decoder architecture that integrates:
+To address these issues, we propose an enhanced U-shaped encoder–decoder architecture integrating:
 
-* ✅ **SCAS (Skip Connection-based Cross-scale Attention Strategy)**
-* ✅ **D2F (Dual-Domain Feature Fusion with Frequency Perception)**
+* **SCAS (Skip Connection-based Cross-scale Attention Strategy)**
+* **D2F (Dual-domain Feature Fusion with Frequency Perception)**
 
-These modules jointly improve feature representation by capturing both spatial and frequency-domain information.
+These modules collaboratively enhance both global structural representation and fine-grained boundary modeling.
 
 ---
 
 ## 🚀 Key Features
 
-* 🔹 Cross-scale attention for effective multi-level feature fusion
-* 🔹 Frequency-domain perception for boundary refinement
-* 🔹 Robust performance across multiple benchmark datasets
-* 🔹 Lightweight and efficient design for practical deployment
-
+* Cross-scale attention for multi-level feature interaction
+* Frequency-domain perception for boundary enhancement
+* Robust generalization across multiple datasets
 ---
 
 ## 📂 Project Structure
@@ -39,30 +35,36 @@ These modules jointly improve feature representation by capturing both spatial a
 ├── scripts/
 │   ├── train.py        # Training pipeline
 │   ├── val.py          # Validation and evaluation
-│   └── utils.py        # Utility functions (metrics, logging, etc.)
+│   ├── test.py         # Testing script
+│   ├── model.py        # Network definition
+│   ├── config.py       # Configuration settings
+│   ├── ImageLoader2D.py# Dataset loader
+│   └── utils.py        # Utilities (metrics, logging, etc.)
 │
-├── models/             # Network architecture (SCAS, D2F modules)
-├── datasets/           # Dataset loading and preprocessing
-├── results/            # Training logs and saved outputs
-│   ├── logs/
-│   ├── models/
-│   └── visuals/
+├── datasets/           # Dataset organization
+├── checkpoints/        # Saved model weights
+├── logs/               # Training logs
+├── visual/             # Visualization results
+├── split_indices/      # Dataset split files
 │
-├── config/             # Configuration files
-├── README.md
+├── main.py
+├── main.sh
+├── requirement.txt
+└── README.md
 ```
+
 ---
 
 ## 📊 Datasets
 
-The model is evaluated on multiple public polyp segmentation datasets:
+The model is evaluated on widely used polyp segmentation benchmarks:
 
-* **CVC-ClinicDB**
-* **CVC-ColonDB**
-* **ETIS-LaribPolypDB**
-* **CVC-t**
+* CVC-ClinicDB
+* CVC-ColonDB
+* ETIS-LaribPolypDB
+* Kvasir-SEG
 
-📌 Please organize datasets as:
+Dataset structure:
 
 ```bash
 datasets/
@@ -70,21 +72,24 @@ datasets/
 │   ├── images/
 │   └── masks/
 ```
+
 ---
 
 ## 📥 Pretrained Models & Resources
 
-All pretrained weights, experimental results, and supplementary materials are available via Google Drive:
+All pretrained weights, dataset splits, logs, and visualization results are provided via Baidu Netdisk:
 
-👉 **Download Link:**
-[https://drive.google.com/drive/folders/1YZtpfXwUjrcIPLoa8odCHRX-lquYAlPy?usp=sharing](https://drive.google.com/drive/folders/1YZtpfXwUjrcIPLoa8odCHRX-lquYAlPy?usp=sharing)
+👉 **Baidu Netdisk Link:**
+[https://pan.baidu.com/s/1aznunT5vd9zFsEtesPiERw](https://pan.baidu.com/s/1aznunT5vd9zFsEtesPiERw)
 
-Contents include:
+🔑 **Extraction Code:** `58qf`
 
-* ✔️ Pretrained model weights
-* ✔️ Training logs
-* ✔️ Visualization results
-* ✔️ Dataset splits (train/val/test)
+📦 Contents include:
+
+* Pretrained model weights
+* Image datasets
+* Dataset split indices (train/val/test)
+
 ---
 
 ## ⚙️ Installation
@@ -93,24 +98,23 @@ Contents include:
 conda create -n polyp python=3.10
 conda activate polyp
 
-pip install -r requirements.txt
+pip install -r requirement.txt
 ```
-
 ---
 
 ## 🏋️ Training
 
 ```bash
-sh main.sh
+python scripts/train.py
 ```
 
-### Key Settings:
+### Training Settings
 
 * Batch size: 8
-* Learning rate: 1e-4
+* Learning rate: 1e-3
 * Optimizer: AdamW
 * Scheduler: Cosine Annealing
-* Epochs: 100
+* Epochs: 200
 
 ---
 
@@ -120,7 +124,7 @@ sh main.sh
 python scripts/val.py
 ```
 
-Evaluation metrics include:
+### Metrics
 
 * mDice
 * mIoU
@@ -129,34 +133,22 @@ Evaluation metrics include:
 * ASSD
 * BF-score
 
----
+## 📌 Visualization
 
-## 📈 Results
-
-Our method demonstrates strong performance across datasets, achieving:
-
-* Superior boundary delineation
-* Robust generalization ability
-* Stable multi-run performance
-
----
-
-Saved under:
+Segmentation results and comparisons are saved in:
 
 ```bash
-results/visuals/
+visual/
 ```
----
+
 
 ## 📜 Citation
 
-If you find this work useful, please cite:
-
 ```bibtex
-@article{your_paper_2026,
+@article{paper_2026,
   title={Enhanced U-Shape Network with Cross-Scale Attention and Frequency-Domain Perception for Robust Colorectal Polyp Segmentation},
   author={Your Name et al.},
-  journal={Plos one},
+  journal={Plos one },
   year={2026}
 }
 ```
