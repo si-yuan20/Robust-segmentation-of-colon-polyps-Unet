@@ -62,7 +62,7 @@ The model is evaluated on widely used polyp segmentation benchmarks:
 * CVC-ClinicDB
 * CVC-ColonDB
 * ETIS-LaribPolypDB
-* Kvasir-SEG
+* CVC-T
 
 Dataset structure:
 
