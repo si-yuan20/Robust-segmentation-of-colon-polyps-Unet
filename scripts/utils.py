@@ -1,9 +1,10 @@
-# utils
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from sklearn.metrics import jaccard_score, f1_score, precision_score, recall_score, accuracy_score, mean_absolute_error
+from scipy.ndimage import distance_transform_edt
+from skimage.measure import label, regionprops
+from sklearn.metrics import jaccard_score, f1_score, precision_score, recall_score
 
 class DiceLoss(nn.Module):
     def __init__(self, smooth=1e-5):
@@ -12,14 +13,10 @@ class DiceLoss(nn.Module):
 
     def forward(self, inputs, targets):
         inputs = torch.sigmoid(inputs)
-        
-        # 展平预测和目标
         inputs = inputs.view(-1)
         targets = targets.view(-1)
-        
         intersection = (inputs * targets).sum()
         dice = (2. * intersection + self.smooth) / (inputs.sum() + targets.sum() + self.smooth)
-        
         return 1 - dice
 
 class BCEDiceLoss(nn.Module):
@@ -52,56 +49,113 @@ class MultiScaleLoss(nn.Module):
             self.weights[3] * ds3_loss +
             self.weights[4] * ds4_loss
         )
-        
         return total_loss
 
+def compute_hd95(y_true, y_pred):
+    """计算95%豪斯多夫距离"""
+    y_true = np.squeeze(y_true).astype(np.bool_)
+    y_pred = np.squeeze(y_pred).astype(np.bool_)
+
+    if not np.any(y_true) and not np.any(y_pred):
+        return 0.0
+    if not np.any(y_true) or not np.any(y_pred):
+        return 100.0
+
+    y_true_dist = distance_transform_edt(~y_true)
+    y_pred_dist = distance_transform_edt(~y_pred)
+
+    border_true = np.logical_xor(y_true, distance_transform_edt(y_true) < 1)
+    border_pred = np.logical_xor(y_pred, distance_transform_edt(y_pred) < 1)
+
+    true_points = np.argwhere(border_true)
+    pred_points = np.argwhere(border_pred)
+
+    dist_true = np.min(y_pred_dist[true_points[:, 0], true_points[:, 1]]) if len(true_points) > 0 else 0
+    dist_pred = np.min(y_true_dist[pred_points[:, 0], pred_points[:, 1]]) if len(pred_points) > 0 else 0
+
+    hd95 = max(np.percentile(y_pred_dist[true_points], 95) if len(true_points) > 0 else 0,
+                np.percentile(y_true_dist[pred_points], 95) if len(pred_points) > 0 else 0)
+    return hd95
+
+def compute_assd(y_true, y_pred):
+    """计算平均对称表面距离 ASSD"""
+    y_true = np.squeeze(y_true).astype(np.bool_)
+    y_pred = np.squeeze(y_pred).astype(np.bool_)
+
+    if not np.any(y_true) and not np.any(y_pred):
+        return 0.0
+    if not np.any(y_true) or not np.any(y_pred):
+        return 100.0
+
+    y_true_dist = distance_transform_edt(~y_true)
+    y_pred_dist = distance_transform_edt(~y_pred)
+
+    border_true = np.argwhere(np.logical_xor(y_true, distance_transform_edt(y_true) < 1))
+    border_pred = np.argwhere(np.logical_xor(y_pred, distance_transform_edt(y_pred) < 1))
+
+    assd = (np.mean(y_pred_dist[border_true[:, 0], border_true[:, 1]]) +
+            np.mean(y_true_dist[border_pred[:, 0], border_pred[:, 1]])) / 2
+    return assd
+
+def compute_bf_score(y_true, y_pred):
+    """计算BF分数 (Boundary F1-Score)"""
+    y_true = np.squeeze(y_true).astype(np.bool_)
+    y_pred = np.squeeze(y_pred).astype(np.bool_)
+
+    if not np.any(y_true) and not np.any(y_pred):
+        return 1.0
+    if not np.any(y_true) or not np.any(y_pred):
+        return 0.0
+
+    dt = distance_transform_edt(~y_true)
+    dp = distance_transform_edt(~y_pred)
+
+    border_t = np.logical_xor(y_true, dt < 1)
+    border_p = np.logical_xor(y_pred, dp < 1)
+
+    t2p = dt[border_p].sum() / max(border_p.sum(), 1)
+    p2t = dp[border_t].sum() / max(border_t.sum(), 1)
+
+    bf = 2 / (1 / (1e-5 + t2p) + 1 / (1e-5 + p2t))
+    return np.clip(bf, 0, 1)
+
 def calculate_metrics(y_true, y_pred):
-    """计算评估指标"""
-    y_pred_bin = y_pred > 0.5  # 二值化
+    """计算所有分割指标（含新增HD95/ASSD/BF-Score）"""
+    y_pred_bin = (torch.sigmoid(y_pred) > 0.5).float()
     
-    # 转换为numpy数组并展平
-    y_true_np = y_true.cpu().numpy().flatten()
-    y_pred_np = y_pred_bin.cpu().numpy().flatten()
+    y_true_np = y_true.cpu().numpy().astype(np.uint8)
+    y_pred_np = y_pred_bin.cpu().numpy().astype(np.uint8)
     
-    # 计算指标
-    iou = jaccard_score(y_true_np, y_pred_np, zero_division=0)
-    f1 = f1_score(y_true_np, y_pred_np, zero_division=0)
-    precision = precision_score(y_true_np, y_pred_np, zero_division=0)
-    recall = recall_score(y_true_np, y_pred_np, zero_division=0)
-    accuracy = calculate_accuracy(y_true_np, y_pred_np)
+    iou = jaccard_score(y_true_np.flatten(), y_pred_np.flatten(), zero_division=0)
+    f1 = f1_score(y_true_np.flatten(), y_pred_np.flatten(), zero_division=0)
+    precision = precision_score(y_true_np.flatten(), y_pred_np.flatten(), zero_division=0)
+    recall = recall_score(y_true_np.flatten(), y_pred_np.flatten(), zero_division=0)
+    accuracy = calculate_accuracy(y_true_np.flatten(), y_pred_np.flatten())
+
+    hd95_list, assd_list, bf_list = [], [], []
+    for bt, bp in zip(y_true_np, y_pred_np):
+        hd95_list.append(compute_hd95(bt, bp))
+        assd_list.append(compute_assd(bt, bp))
+        bf_list.append(compute_bf_score(bt, bp))
 
     return {
-        'iou': iou,
-        'f1': f1,
-        'precision': precision,
-        'recall': recall,
-        'accuracy': accuracy
+        'iou': iou, 'f1': f1, 'precision': precision, 'recall': recall, 'accuracy': accuracy,
+        'hd95': float(np.mean(hd95_list)),
+        'assd': float(np.mean(assd_list)),
+        'bf_score': float(np.mean(bf_list))
     }
 
 def calculate_mae(y_true, y_pred):
-    """计算MAE"""
     y_pred_sig = torch.sigmoid(y_pred)
-    mae = torch.abs(y_pred_sig - y_true).mean().item()
-    return mae
-
-# def calculate_accuracy(y_true, y_pred):
-#     """计算Accuracy"""
-#     y_pred_bin = y_pred > 0.5  # 二值化
-#     accuracy = (y_pred_bin == y_true).float().mean().item()
-#     return accuracy
-
+    return torch.abs(y_pred_sig - y_true).mean().item()
 
 def calculate_accuracy(y_true, y_pred):
-    # 转换为PyTorch张量
-    y_true_tensor = torch.tensor(y_true, dtype=torch.float32)
-    y_pred_tensor = torch.tensor(y_pred, dtype=torch.float32)
-
-    # 使用PyTorch的方式计算准确率
-    accuracy = (y_pred_tensor == y_true_tensor).float().mean().item()
-    return accuracy
+    if isinstance(y_true, np.ndarray):
+        y_true = torch.tensor(y_true)
+        y_pred = torch.tensor(y_pred)
+    return (y_pred == y_true).float().mean().item()
 
 def get_loss_function(loss_name='bce_dice'):
-    """获取损失函数"""
     if loss_name == 'bce':
         return nn.BCEWithLogitsLoss()
     elif loss_name == 'dice':
